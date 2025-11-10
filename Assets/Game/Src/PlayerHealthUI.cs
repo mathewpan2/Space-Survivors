@@ -6,15 +6,18 @@ public class PlayerHealthUI : MonoBehaviour
     public Health playerHealth;
     public Slider slider;
 
-    void Start()
+    void Awake()
     {
+        if (!slider) slider = GetComponentInChildren<Slider>(true);
         if (!playerHealth)
         {
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p) playerHealth = p.GetComponent<Health>();
         }
-        if (!slider) slider = GetComponentInChildren<Slider>();
+    }
 
+    void OnEnable()
+    {
         if (playerHealth && slider)
         {
             slider.minValue = 0;
@@ -22,14 +25,21 @@ public class PlayerHealthUI : MonoBehaviour
             slider.value = playerHealth.Current;
             playerHealth.onHealthChanged.AddListener(UpdateBar);
         }
+        else
+        {
+            Debug.LogWarning($"[PlayerHealthUI] Missing refs: playerHealth={playerHealth}, slider={slider}");
+        }
+    }
+
+    void OnDisable()
+    {
+        if (playerHealth) playerHealth.onHealthChanged.RemoveListener(UpdateBar);
     }
 
     void UpdateBar(int current, int max)
     {
-        if (slider)
-        {
-            if (slider.maxValue != max) slider.maxValue = max;
-            slider.value = current;
-        }
+        if (!slider) return;
+        if (slider.maxValue != max) slider.maxValue = max;
+        slider.value = current;
     }
 }
