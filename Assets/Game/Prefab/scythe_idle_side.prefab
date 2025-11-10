@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 3103626946695592955}
   - component: {fileID: -6920120677618270582}
   - component: {fileID: -3234518825196267804}
+  - component: {fileID: 4129934254659491963}
   m_Layer: 0
   m_Name: scythe_idle_side
   m_TagString: Untagged
@@ -219,6 +220,25 @@ MonoBehaviour:
   turnLerp: 12
   spriteToFlip: {fileID: 0}
   animator: {fileID: 0}
+--- !u!114 &4129934254659491963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3103626946695592956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6c1eaaf8e1c1f4294c1a505840d811, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 1
+  onDie:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3103626946783595989
 GameObject:
   m_ObjectHideFlags: 0

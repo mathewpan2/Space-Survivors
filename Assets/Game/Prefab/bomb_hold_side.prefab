@@ -119,6 +119,9 @@ GameObject:
   - component: {fileID: 4483611064774045663}
   - component: {fileID: 6803599719745269480}
   - component: {fileID: 297893403694322262}
+  - component: {fileID: -3650242371019491660}
+  - component: {fileID: 5243061775668739774}
+  - component: {fileID: 591425404408544471}
   m_Layer: 0
   m_Name: bomb_hold_side
   m_TagString: Untagged
@@ -263,6 +266,77 @@ MonoBehaviour:
   turnLerp: 12
   spriteToFlip: {fileID: 0}
   animator: {fileID: 0}
+--- !u!114 &-3650242371019491660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4483611064774045660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6c1eaaf8e1c1f4294c1a505840d811, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 1
+  onDie:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!70 &5243061775668739774
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4483611064774045660}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 3.6, y: 3}
+  m_Direction: 0
+--- !u!114 &591425404408544471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4483611064774045660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3e16225ed5ff04e826ceaaeb37a495, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  tickInterval: 0.5
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &4483611064818042478
 GameObject:
   m_ObjectHideFlags: 0
