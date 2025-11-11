@@ -13,8 +13,8 @@ public class ContactDamage : MonoBehaviour
     {
         if (Time.time < nextTickTime) return;
         if (((1 << col.gameObject.layer) & playerLayer) == 0) return;
-
         var hp = col.gameObject.GetComponent<Health>();
+        Debug.Log("taking damage stay "+ hp);
         if (hp) hp.TakeDamage(damage);
         nextTickTime = Time.time + tickInterval;
     }
@@ -23,9 +23,11 @@ public class ContactDamage : MonoBehaviour
     void OnTriggerStay2D(Collider2D other)
     {
         if (Time.time < nextTickTime) return;
-        if (((1 << other.gameObject.layer) & playerLayer) == 0) return;
+        // Debug.Log($"LayerMask value={playerLayer.value}, playerLayerBit={(1 << other.gameObject.layer)}, overlap={(playerLayer.value & (1 << other.gameObject.layer))}");
 
+        if (((1 << other.gameObject.layer) & playerLayer) == 0) return;
         var hp = other.GetComponent<Health>();
+        Debug.Log("taking damage trigger: " + hp);
         if (hp) hp.TakeDamage(damage);
         nextTickTime = Time.time + tickInterval;
     }

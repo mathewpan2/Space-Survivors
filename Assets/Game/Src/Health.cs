@@ -7,15 +7,21 @@ public class Health : MonoBehaviour
     int current;
 
     public UnityEvent onDie;
-    public UnityEvent<int,int> onHealthChanged; // (current, max)
+    public UnityEvent<int,int> onHealthChanged = new UnityEvent<int,int>();
+    private SpriteFlash flashEffect;
 
-    void Awake() { current = maxHealth; onHealthChanged?.Invoke(current, maxHealth); }
+    void Awake() { 
+        current = maxHealth; onHealthChanged.Invoke(current, maxHealth); 
+        flashEffect = GetComponent<SpriteFlash>();
+    }
 
     public void TakeDamage(int amount)
     {
+        Debug.Log("taking damage: " + current);
         if (amount <= 0 || current <= 0) return;
         current = Mathf.Max(0, current - amount);
-        onHealthChanged?.Invoke(current, maxHealth);
+        onHealthChanged.Invoke(current, maxHealth);
+        flashEffect?.FlashRed();
         if (current == 0) Die();
     }
 
@@ -23,7 +29,7 @@ public class Health : MonoBehaviour
     {
         if (amount <= 0) return;
         current = Mathf.Min(maxHealth, current + amount);
-        onHealthChanged?.Invoke(current, maxHealth);
+        onHealthChanged.Invoke(current, maxHealth);
     }
 
     void Die()

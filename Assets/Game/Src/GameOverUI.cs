@@ -11,7 +11,9 @@ public class GameOverUI : MonoBehaviour
         if (!playerHealth)
         {
             var p = GameObject.FindGameObjectWithTag("Player");
-            if (p) playerHealth = p.GetComponent<Health>();
+            if (p) {
+                playerHealth = p.GetComponent<Health>();
+            }
         }
         playerHealth.onDie.AddListener(OnPlayerDie);
         if (gameOverPanel) gameOverPanel.SetActive(false);
@@ -19,6 +21,7 @@ public class GameOverUI : MonoBehaviour
 
     void OnPlayerDie()
     {
+        Debug.Log("player die");
         if (gameOverPanel) gameOverPanel.SetActive(true);
         Time.timeScale = 0f;  // pause
     }

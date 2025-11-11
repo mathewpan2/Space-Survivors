@@ -13,6 +13,7 @@ public class ProjectileDamage : MonoBehaviour
         if (((1 << other.gameObject.layer) & hitLayers) == 0) return;
         var hp = other.GetComponent<Health>();
         if (hp) hp.TakeDamage(damage);
+        Debug.Log("hit");
         Destroy(gameObject);
     }
 }
