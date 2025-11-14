@@ -11,6 +11,8 @@ public class Movement : MonoBehaviour
 
     [Header("Shooting")]
     public GameObject bulletPrefab;
+    public Transform firePoint; // added for gun shooting out gun tip
+    public GameObject gun; // added for pulling out/stowing gun
     public float bulletSpeed = 10f;
     public float fireRate = 0.15f;
     private bool isFiring = false;
@@ -42,7 +44,7 @@ public class Movement : MonoBehaviour
         }
 
         // Flip sprite based on horizontal direction
-        if (moveInput.x != 0 && moveInput.y==0)
+        if (moveInput.x != 0 && moveInput.y == 0)
             spriteRenderer.flipX = moveInput.x > 0;
 
         // Animator parameters
@@ -52,6 +54,15 @@ public class Movement : MonoBehaviour
             anim.SetFloat("MoveY", moveInput.y);
             anim.SetFloat("Speed", moveInput.sqrMagnitude);
             // anim.SetBool("IsFiring", isFiring);
+        }
+
+
+
+        // Toggle gun visibility when pressing 1
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        {
+            if (gun != null)
+                gun.SetActive(!gun.activeSelf);
         }
     }
 
@@ -78,7 +89,9 @@ public class Movement : MonoBehaviour
         Vector2 direction = ((Vector2)(worldPos - transform.position)).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(0, 0, angle));
+        //GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(0, 0, angle));
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.Euler(0, 0, angle)); // changed to shoot from firepoint position
+
         if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
             rb.velocity = direction * bulletSpeed;
     }
