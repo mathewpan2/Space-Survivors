@@ -36,8 +36,8 @@ public class Movement : MonoBehaviour
         else
             isFiring = false;
 
-        // Fire bullets
-        if (isFiring && Time.time >= nextFireTime)
+        // Fire bullets only if gun is visible
+        if (isFiring && gun.activeSelf && Time.time >= nextFireTime)
         {
             ShootAtMouse();
             nextFireTime = Time.time + fireRate;
@@ -46,6 +46,42 @@ public class Movement : MonoBehaviour
         // Flip sprite based on horizontal direction
         if (moveInput.x != 0 && moveInput.y == 0)
             spriteRenderer.flipX = moveInput.x > 0;
+
+
+        // Aim gun at mouse
+        if (gun != null)
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            mousePos.z = 0f;
+
+            Vector3 direction = mousePos - gun.transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            gun.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+            // Flip detection
+            bool facingLeft = angle > 90f || angle < -90f;
+
+            // Offsets
+            Vector3 rightOffset = new Vector3(0.90f, -0.55f, 0f);  // tweak these
+            Vector3 leftOffset = new Vector3(-0.90f, -0.55f, 0f); // tweak these
+
+            // Apply sprite flip
+            SpriteRenderer sr = gun.GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sr.flipY = facingLeft;
+
+            // Apply gun position offset
+            gun.transform.localPosition = facingLeft ? leftOffset : rightOffset;
+        }
+
+
+
+
+
+
+
+
 
         // Animator parameters
         if (anim != null)
@@ -86,11 +122,11 @@ public class Movement : MonoBehaviour
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
         worldPos.z = 0;
 
-        Vector2 direction = ((Vector2)(worldPos - transform.position)).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        // Direction from gun tip to mouse
+        Vector2 direction = ((Vector2)(worldPos - firePoint.position)).normalized;
 
-        //GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.Euler(0, 0, angle));
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.Euler(0, 0, angle)); // changed to shoot from firepoint position
+        // Spawn bullet at firepoint with proper rotation
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
         if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
             rb.velocity = direction * bulletSpeed;
