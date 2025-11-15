@@ -124,22 +124,14 @@ public class Movement : MonoBehaviour
         }
 
 
-
-
         
 
         // Melee attack when active
-        if (isMeleeActive && Keyboard.current.spaceKey.wasPressedThisFrame && Time.time >= nextMeleeTime)
+        if (isMeleeActive && Mouse.current.leftButton.wasPressedThisFrame && Time.time >= nextMeleeTime)
         {
             MeleeAttack();
             nextMeleeTime = Time.time + meleeCooldown;
         }
-
-
-
-
-
-
 
 
 
@@ -222,7 +214,7 @@ public class Movement : MonoBehaviour
             anim.SetTrigger("Melee");
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleePoint.position, meleeRange, enemyLayers);
-
+        
         foreach (Collider2D enemy in hitEnemies)
         {
             var hp = enemy.GetComponent<Health>();
