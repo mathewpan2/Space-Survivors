@@ -18,6 +18,19 @@ public class Movement : MonoBehaviour
     private bool isFiring = false;
     private float nextFireTime = 0f;
 
+
+    [Header("Melee Weapon")]
+    public GameObject meleeWeapon;    // Your scythe/weapon GameObject
+    public Transform meleePoint;      // Point in front of weapon where hit is detected
+    public float meleeRange = 1f;     // Radius of melee hit
+    public int meleeDamage = 1;       // Damage dealt by melee attack
+    public LayerMask enemyLayers;     // Enemy layers to hit
+    public float meleeCooldown = 0.5f;// Delay between attacks
+    private float nextMeleeTime = 0f; // Internal timer
+    private bool isMeleeActive = false; // Whether melee is active
+
+
+
     [Header("Animation")]
     [SerializeField] private Animator anim;
 
@@ -26,6 +39,13 @@ public class Movement : MonoBehaviour
         if (myRigidbody == null) myRigidbody = GetComponent<Rigidbody2D>();
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
         if (anim == null) anim = GetComponent<Animator>();
+
+        // Ensure weapons are hidden at start
+        if (gun != null) gun.SetActive(false);
+        if (meleeWeapon != null) meleeWeapon.SetActive(false);
+
+        // Ensure melee is marked as inactive internally
+        isMeleeActive = false;
     }
 
     void Update()
@@ -75,6 +95,46 @@ public class Movement : MonoBehaviour
             gun.transform.localPosition = facingLeft ? leftOffset : rightOffset;
         }
 
+        // Aim melee weapon at mouse
+        if (meleeWeapon != null && isMeleeActive)
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            mousePos.z = 0f;
+
+            Vector3 direction = mousePos - meleeWeapon.transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            meleeWeapon.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+            // Flip detection
+            bool facingLeft = angle > 90f || angle < -90f;
+
+            // Offsets (tweak for your sprite)
+            Vector3 rightOffset = new Vector3(1.0f, 0f, 0f); // farther to the right
+            Vector3 leftOffset = new Vector3(-1.0f, 0f, 0f); // farther to the left
+
+
+            // Apply sprite flip
+            SpriteRenderer sr = meleeWeapon.GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sr.flipY = facingLeft;
+
+            // Apply local position offset
+            meleeWeapon.transform.localPosition = facingLeft ? leftOffset : rightOffset;
+        }
+
+
+
+
+        
+
+        // Melee attack when active
+        if (isMeleeActive && Keyboard.current.spaceKey.wasPressedThisFrame && Time.time >= nextMeleeTime)
+        {
+            MeleeAttack();
+            nextMeleeTime = Time.time + meleeCooldown;
+        }
+
 
 
 
@@ -98,8 +158,29 @@ public class Movement : MonoBehaviour
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             if (gun != null)
-                gun.SetActive(!gun.activeSelf);
+            {
+                gun.SetActive(true);            // Show gun
+                if (meleeWeapon != null)        // Hide sword
+                {
+                    meleeWeapon.SetActive(false);
+                    isMeleeActive = false;
+                }
+            }
         }
+
+        // Toggle melee weapon visibility when pressing 2
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        {
+            if (meleeWeapon != null)
+            {
+                meleeWeapon.SetActive(true);    // Show sword
+                isMeleeActive = true;
+
+                if (gun != null)                // Hide gun
+                    gun.SetActive(false);
+            }
+        }
+
     }
 
     void FixedUpdate()
@@ -131,4 +212,37 @@ public class Movement : MonoBehaviour
         if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
             rb.velocity = direction * bulletSpeed;
     }
+
+
+
+
+    void MeleeAttack()
+    {
+        if (anim != null)
+            anim.SetTrigger("Melee");
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleePoint.position, meleeRange, enemyLayers);
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            var hp = enemy.GetComponent<Health>();
+            if (hp != null)
+            {
+                hp.TakeDamage(meleeDamage);
+                Debug.Log("Melee hit " + enemy.name);
+            }
+        }
+    }
+
+
+
+    void OnDrawGizmosSelected()
+    {
+        if (meleePoint == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(meleePoint.position, meleeRange);
+    }
+
+
+
 }
