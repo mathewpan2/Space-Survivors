@@ -34,6 +34,8 @@ public class Movement : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator anim;
 
+    [SerializeField] private Animator playerAnim;
+
     void Awake()
     {
         if (myRigidbody == null) myRigidbody = GetComponent<Rigidbody2D>();
@@ -142,6 +144,13 @@ public class Movement : MonoBehaviour
             anim.SetFloat("MoveY", moveInput.y);
             anim.SetFloat("Speed", moveInput.sqrMagnitude);
             // anim.SetBool("IsFiring", isFiring);
+        }
+
+        if (playerAnim != null)
+        {
+            playerAnim.SetFloat("MoveX", moveInput.x);
+            playerAnim.SetFloat("MoveY", moveInput.y);
+            playerAnim.SetFloat("Speed", moveInput.sqrMagnitude);
         }
 
 

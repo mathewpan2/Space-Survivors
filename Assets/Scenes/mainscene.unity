@@ -872,6 +872,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 910180442787482865, guid: 4d24a39a11595a8469feb3298e5869d9, type: 3}
+      propertyPath: playerAnim
+      value: 
+      objectReference: {fileID: 1711967316}
+    - target: {fileID: 910180442787482865, guid: 4d24a39a11595a8469feb3298e5869d9, type: 3}
       propertyPath: meleeCooldown
       value: 0.25
       objectReference: {fileID: 0}
@@ -1903,6 +1907,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb6c1eaaf8e1c1f4294c1a505840d811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &1711967316 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3433032877048047005, guid: 4d24a39a11595a8469feb3298e5869d9, type: 3}
+  m_PrefabInstance: {fileID: 864074722}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1906065660
 GameObject:
   m_ObjectHideFlags: 0
