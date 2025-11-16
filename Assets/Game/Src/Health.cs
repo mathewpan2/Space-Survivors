@@ -10,9 +10,18 @@ public class Health : MonoBehaviour
     public UnityEvent<int,int> onHealthChanged = new UnityEvent<int,int>();
     private SpriteFlash flashEffect;
 
+    private int expDrop = 25;
+
+    private ExpController playerExp;
+
     void Awake() { 
-        current = maxHealth; onHealthChanged.Invoke(current, maxHealth); 
+        current = maxHealth; onHealthChanged.Invoke(current, maxHealth);
         flashEffect = GetComponent<SpriteFlash>();
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerExp = player.GetComponent<ExpController>();
+        }
     }
 
     public void TakeDamage(int amount)
@@ -35,6 +44,11 @@ public class Health : MonoBehaviour
     void Die()
     {
         onDie?.Invoke();
+
+        if (playerExp != null)
+        {
+            playerExp.AddExp(expDrop);
+        }
         Destroy(gameObject);
     }
 

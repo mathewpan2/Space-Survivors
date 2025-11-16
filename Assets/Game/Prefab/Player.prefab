@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 4472013642162398343}
   - component: {fileID: 6134416727386889650}
   - component: {fileID: 3391846446971299215}
+  - component: {fileID: 4500600730919329093}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -237,6 +238,7 @@ MonoBehaviour:
     m_Bits: 128
   meleeCooldown: 0.5
   anim: {fileID: 0}
+  playerAnim: {fileID: 0}
 --- !u!114 &4472013642162398343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,6 +301,18 @@ MonoBehaviour:
   onHealthChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4500600730919329093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3433032877048047004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d2bf152b4b9e446974b2392acd729b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3433032877061787960
 GameObject:
   m_ObjectHideFlags: 0

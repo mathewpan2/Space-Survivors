@@ -457,6 +457,7 @@ MonoBehaviour:
   turnLerp: 12
   includeInactiveSprites: 1
   facesRightByDefault: 0
+  useYRotationFlip: 1
   animator: {fileID: 0}
 --- !u!114 &-2615669092084025103
 MonoBehaviour:
