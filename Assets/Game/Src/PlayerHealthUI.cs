@@ -36,7 +36,7 @@ public class PlayerHealthUI : MonoBehaviour
         if (playerHealth) playerHealth.onHealthChanged.RemoveListener(UpdateBar);
     }
 
-    void UpdateBar(int current, int max)
+    void UpdateBar(float current, float max)
     {
         if (!slider) return;
         if (slider.maxValue != max) slider.maxValue = max;
