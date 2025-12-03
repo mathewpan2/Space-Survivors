@@ -11,7 +11,10 @@ public class PlayerStats : MonoBehaviour
 
     public float swordDamage = 1;
     public float swordAttackSpeed = 1f; 
-    public float swordRange = 1f; 
+    public float swordRange = 1f;
+
+    public int extraShots = 0;          // number of additional bullets fired
+    public float extraShotAngle = 15f;  // angle spread between extra shots (degrees) 
 
     void Awake()
     {
@@ -60,8 +63,9 @@ public class PlayerStats : MonoBehaviour
                 swordRange += upgrade.amount;
                 break;
 
-
-
+            case UpgradeType.ExtraShot:
+                extraShots += Mathf.RoundToInt(upgrade.amount);
+                break;
         }
 
         Debug.Log($"Applied upgrade: {upgrade.title}");

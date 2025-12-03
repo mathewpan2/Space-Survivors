@@ -8,12 +8,15 @@ public class LevelUpUI : MonoBehaviour
 
     public GameObject panel;
     public LevelUpOptionUI[] optionSlots;         // size 3
-    public List<PlayerUpgrade> allUpgrades;       // assign in inspector
+    public List<PlayerUpgrade> allUpgrades;       // auto-loaded from Resources
 
     void Awake()
     {
         if (!panel) panel = gameObject;
         panel.SetActive(false);
+
+        // Auto-load all upgrades from Resources/Upgrades folder
+        LoadAllUpgrades();
 
         if (!playerExp)
         {
@@ -25,6 +28,13 @@ public class LevelUpUI : MonoBehaviour
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p) playerStats = p.GetComponent<PlayerStats>();
         }
+    }
+
+    void LoadAllUpgrades()
+    {
+        var loaded = Resources.LoadAll<PlayerUpgrade>("Upgrades");
+        allUpgrades = new List<PlayerUpgrade>(loaded);
+        Debug.Log($"[LevelUpUI] Auto-loaded {allUpgrades.Count} upgrades from Resources/Upgrades");
     }
 
     void OnEnable()

@@ -20,13 +20,18 @@ public class ProjectileDamage : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // Ignore other projectiles
+        if (other.GetComponent<ProjectileDamage>() != null)
+            return;
+        
         // ignore if not in hitLayers
-        if (((1 << other.gameObject.layer) & hitLayers) == 0) return;
+        if (((1 << other.gameObject.layer) & hitLayers) == 0)
+            return;
 
         var hp = other.GetComponent<Health>();
         if (hp != null)
         {
-            hp.TakeDamage(damage);      // 🔹 use local damage, no PlayerStats here
+            hp.TakeDamage(damage);
         }
 
         Destroy(gameObject);

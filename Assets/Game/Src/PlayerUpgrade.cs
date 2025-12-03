@@ -11,7 +11,9 @@ public enum UpgradeType
 
     SwordDamage,
     SwordAttackSpeed,
-    SwordRange
+    SwordRange,
+
+    ExtraShot
     // add more as needed
 }
 

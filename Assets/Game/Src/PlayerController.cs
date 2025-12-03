@@ -171,20 +171,47 @@ public class Movement : MonoBehaviour
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
         worldPos.z = 0;
 
-        Vector2 direction = ((Vector2)(worldPos - firePoint.position)).normalized;
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
-            rb.velocity = direction * stats.bulletSpeed;   // 🔹 use stats.bulletSpeed
-
-        if (bullet.TryGetComponent<ProjectileDamage>(out var proj))
+        Vector2 baseDirection = ((Vector2)(worldPos - firePoint.position)).normalized;
+        
+        // Fire main bullet + extra shots
+        int totalShots = 1 + stats.extraShots;
+        
+        for (int i = 0; i < totalShots; i++)
         {
-            // either direct:
-            proj.damage = stats.gunDamage;          // or stats.bulletDamage
+            // Calculate angle offset: center shot has no offset, others spread symmetrically
+            float angleOffset = 0f;
+            if (totalShots > 1)
+            {
+                // Spread shots evenly: e.g., 3 shots = -15°, 0°, +15°
+                float halfSpread = (totalShots - 1) * stats.extraShotAngle / 2f;
+                angleOffset = -halfSpread + i * stats.extraShotAngle;
+            }
+            
+            // Rotate direction by angle offset
+            Vector2 direction = RotateVector(baseDirection, angleOffset);
+            
+            // Calculate rotation to face the direction of travel
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion bulletRotation = Quaternion.Euler(0, 0, angle);
+            
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, bulletRotation);
 
-            // or if you keep the helper:
-            // proj.InitFromStats(stats);
+            if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
+                rb.velocity = direction * stats.bulletSpeed;
+
+            if (bullet.TryGetComponent<ProjectileDamage>(out var proj))
+            {
+                proj.damage = stats.gunDamage;
+            }
         }
+    }
+
+    Vector2 RotateVector(Vector2 v, float degrees)
+    {
+        float radians = degrees * Mathf.Deg2Rad;
+        float cos = Mathf.Cos(radians);
+        float sin = Mathf.Sin(radians);
+        return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
     }
 
     void SwordAttack()
