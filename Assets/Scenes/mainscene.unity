@@ -995,7 +995,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemySpawner: {fileID: 70387595}
-  survivalTime: 15
+  survivalTime: 60
   timerText: {fileID: 606048408}
   victoryUI: {fileID: 586813243}
 --- !u!4 &25565308
@@ -2120,6 +2120,7 @@ MonoBehaviour:
   avoidMask:
     serializedVersion: 2
     m_Bits: 1
+  healthScalingRate: 10
 --- !u!4 &70387596
 Transform:
   m_ObjectHideFlags: 0
