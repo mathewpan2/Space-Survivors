@@ -48,7 +48,8 @@ GameObject:
   - component: {fileID: 4472013642162398343}
   - component: {fileID: 6134416727386889650}
   - component: {fileID: 3391846446971299215}
-  - component: {fileID: 4500600730919329093}
+  - component: {fileID: -6349400282345897380}
+  - component: {fileID: 5828128803076756718}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -223,20 +224,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myRigidbody: {fileID: -3621966191337242310}
   spriteRenderer: {fileID: 0}
-  moveSpeed: 5
+  stats: {fileID: 0}
   bulletPrefab: {fileID: 1570335359649092007, guid: a629d07a667e5a848beb2f73b670447e, type: 3}
   firePoint: {fileID: 8124670651820752779}
   gun: {fileID: 6079031346258641860}
-  bulletSpeed: 15
-  fireRate: 0.15
-  meleeWeapon: {fileID: 4397480593354287479}
-  meleePoint: {fileID: 8853776640204171603}
-  meleeRange: 1
-  meleeDamage: 1
+  sword: {fileID: 0}
+  swordPoint: {fileID: 0}
   enemyLayers:
     serializedVersion: 2
     m_Bits: 128
-  meleeCooldown: 0.5
   anim: {fileID: 0}
   playerAnim: {fileID: 0}
 --- !u!114 &4472013642162398343
@@ -301,7 +297,7 @@ MonoBehaviour:
   onHealthChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4500600730919329093
+--- !u!114 &-6349400282345897380
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -310,9 +306,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 3433032877048047004}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35d2bf152b4b9e446974b2392acd729b, type: 3}
+  m_Script: {fileID: 11500000, guid: f50e26388a0d4564e80f74afe4924754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 1
+  currentExp: 0
+  ExpToNextLevel: 100
+  onExpChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onLevelUp:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5828128803076756718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3433032877048047004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de071967fe21b634093d3426a70a659d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: {fileID: 0}
+  moveSpeed: 5
+  gunDamage: 1
+  gunFireRate: 0.15
+  bulletSpeed: 15
+  swordDamage: 1
+  swordAttackSpeed: 1
+  swordRange: 3
 --- !u!1 &3433032877061787960
 GameObject:
   m_ObjectHideFlags: 0

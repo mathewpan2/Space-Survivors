@@ -3,37 +3,29 @@ using UnityEngine.InputSystem;
 
 public class Movement : MonoBehaviour
 {
-    [Header("Movement")]
+    [Header("Core")]
     [SerializeField] private Rigidbody2D myRigidbody;
-    [SerializeField] private SpriteRenderer spriteRenderer; // add this
-    public float moveSpeed = 5f;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    public PlayerStats stats;            // 🔹 new: central stats
+
     private Vector2 moveInput;
 
-    [Header("Shooting")]
+    [Header("Gun")]
     public GameObject bulletPrefab;
-    public Transform firePoint; // added for gun shooting out gun tip
-    public GameObject gun; // added for pulling out/stowing gun
-    public float bulletSpeed = 10f;
-    public float fireRate = 0.15f;
+    public Transform firePoint;          // gun tip
+    public GameObject gun;               // gun object
     private bool isFiring = false;
     private float nextFireTime = 0f;
 
-
-    [Header("Melee Weapon")]
-    public GameObject meleeWeapon;    // Your scythe/weapon GameObject
-    public Transform meleePoint;      // Point in front of weapon where hit is detected
-    public float meleeRange = 1f;     // Radius of melee hit
-    public int meleeDamage = 1;       // Damage dealt by melee attack
-    public LayerMask enemyLayers;     // Enemy layers to hit
-    public float meleeCooldown = 0.5f;// Delay between attacks
-    private float nextMeleeTime = 0f; // Internal timer
-    private bool isMeleeActive = false; // Whether melee is active
-
-
+    [Header("Sword")]
+    public GameObject sword;
+    public Transform swordPoint;
+    public LayerMask enemyLayers;
+    private float nextSwordTime = 0f;
+    private bool isSwordActive = false;
 
     [Header("Animation")]
     [SerializeField] private Animator anim;
-
     [SerializeField] private Animator playerAnim;
 
     void Awake()
@@ -41,109 +33,87 @@ public class Movement : MonoBehaviour
         if (myRigidbody == null) myRigidbody = GetComponent<Rigidbody2D>();
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
         if (anim == null) anim = GetComponent<Animator>();
+        if (!stats) stats = GetComponent<PlayerStats>();
+
+        if (!stats)
+            Debug.LogError("[Movement] Missing PlayerStats on player!");
 
         // Ensure weapons are hidden at start
         if (gun != null) gun.SetActive(false);
-        if (meleeWeapon != null) meleeWeapon.SetActive(false);
+        if (sword != null) sword.SetActive(false);
 
-        // Ensure melee is marked as inactive internally
-        isMeleeActive = false;
+        isSwordActive = false;
     }
 
     void Update()
     {
-        // Read input
         if (Mouse.current != null)
             isFiring = Mouse.current.leftButton.isPressed;
         else
             isFiring = false;
 
-        // Fire bullets only if gun is visible
-        if (isFiring && gun.activeSelf && Time.time >= nextFireTime)
+        // 🔹 Use stats.fireRate (seconds between shots)
+        if (isFiring && gun != null && gun.activeSelf && Time.time >= nextFireTime && stats != null)
         {
             ShootAtMouse();
-            nextFireTime = Time.time + fireRate;
+            nextFireTime = Time.time + stats.gunFireRate;
         }
 
         // Flip sprite based on horizontal direction
         if (moveInput.x != 0 && moveInput.y == 0)
             spriteRenderer.flipX = moveInput.x > 0;
 
-
         // Aim gun at mouse
-        if (gun != null)
+        if (gun != null && Mouse.current != null)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             mousePos.z = 0f;
 
             Vector3 direction = mousePos - gun.transform.position;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
             gun.transform.rotation = Quaternion.Euler(0, 0, angle);
 
-            // Flip detection
             bool facingLeft = angle > 90f || angle < -90f;
 
-            // Offsets
-            Vector3 rightOffset = new Vector3(0.90f, -0.55f, 0f);  // tweak these
-            Vector3 leftOffset = new Vector3(-0.90f, -0.55f, 0f); // tweak these
+            Vector3 rightOffset = new Vector3(0.90f, -0.55f, 0f);
+            Vector3 leftOffset  = new Vector3(-0.90f, -0.55f, 0f);
 
-            // Apply sprite flip
             SpriteRenderer sr = gun.GetComponent<SpriteRenderer>();
             if (sr != null)
                 sr.flipY = facingLeft;
 
-            // Apply gun position offset
             gun.transform.localPosition = facingLeft ? leftOffset : rightOffset;
         }
 
-        // Aim melee weapon at mouse
-        if (meleeWeapon != null && isMeleeActive)
+        // Aim sword weapon at mouse
+        if (sword != null && isSwordActive && Mouse.current != null)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             mousePos.z = 0f;
 
-            Vector3 direction = mousePos - meleeWeapon.transform.position;
+            Vector3 direction = mousePos - sword.transform.position;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            sword.transform.rotation = Quaternion.Euler(0, 0, angle);
 
-            meleeWeapon.transform.rotation = Quaternion.Euler(0, 0, angle);
-
-            // Flip detection
             bool facingLeft = angle > 90f || angle < -90f;
 
-            // Offsets (tweak for your sprite)
-            Vector3 rightOffset = new Vector3(1.0f, 0f, 0f); // farther to the right
-            Vector3 leftOffset = new Vector3(-1.0f, 0f, 0f); // farther to the left
+            Vector3 rightOffset = new Vector3(1.0f, 0f, 0f);
+            Vector3 leftOffset  = new Vector3(-1.0f, 0f, 0f);
 
-
-            // Apply sprite flip
-            SpriteRenderer sr = meleeWeapon.GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = sword.GetComponent<SpriteRenderer>();
             if (sr != null)
                 sr.flipY = facingLeft;
 
-            // Apply local position offset
-            meleeWeapon.transform.localPosition = facingLeft ? leftOffset : rightOffset;
+            sword.transform.localPosition = facingLeft ? leftOffset : rightOffset;
         }
 
-
-        
-
-        // Melee attack when active
-        if (isMeleeActive && Mouse.current.leftButton.wasPressedThisFrame && Time.time >= nextMeleeTime)
+        // 🔹 Sword attack using stats.swordCooldown
+        if (isSwordActive && Mouse.current != null &&
+            Mouse.current.leftButton.wasPressedThisFrame &&
+            stats != null && Time.time >= nextSwordTime)
         {
-            MeleeAttack();
-            nextMeleeTime = Time.time + meleeCooldown;
-        }
-
-
-
-        // Animator parameters
-        if (anim != null)
-        {
-            anim.SetFloat("MoveX", moveInput.x);
-            anim.SetFloat("MoveY", moveInput.y);
-            anim.SetFloat("Speed", moveInput.sqrMagnitude);
-            // anim.SetBool("IsFiring", isFiring);
+            SwordAttack();
+            nextSwordTime = Time.time + stats.swordAttackSpeed;
         }
 
         if (playerAnim != null)
@@ -153,41 +123,38 @@ public class Movement : MonoBehaviour
             playerAnim.SetFloat("Speed", moveInput.sqrMagnitude);
         }
 
-
-
-        // Toggle gun visibility when pressing 1
-        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        // Toggle gun visibility (1)
+        if (Keyboard.current != null && Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             if (gun != null)
             {
-                gun.SetActive(true);            // Show gun
-                if (meleeWeapon != null)        // Hide sword
+                gun.SetActive(true);
+                if (sword != null)
                 {
-                    meleeWeapon.SetActive(false);
-                    isMeleeActive = false;
+                    sword.SetActive(false);
+                    isSwordActive = false;
                 }
             }
         }
 
-        // Toggle melee weapon visibility when pressing 2
-        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        // Toggle sword weapon visibility (2)
+        if (Keyboard.current != null && Keyboard.current.digit2Key.wasPressedThisFrame)
         {
-            if (meleeWeapon != null)
+            if (sword != null)
             {
-                meleeWeapon.SetActive(true);    // Show sword
-                isMeleeActive = true;
+                sword.SetActive(true);
+                isSwordActive = true;
 
-                if (gun != null)                // Hide gun
+                if (gun != null)
                     gun.SetActive(false);
             }
         }
-
     }
 
     void FixedUpdate()
     {
-        if (myRigidbody == null) return;
-        myRigidbody.velocity = moveInput * moveSpeed;
+        if (myRigidbody == null || stats == null) return;
+        myRigidbody.velocity = moveInput * stats.moveSpeed;   // 🔹 use stats.moveSpeed
     }
 
     public void OnMove(InputValue value)
@@ -198,52 +165,86 @@ public class Movement : MonoBehaviour
 
     void ShootAtMouse()
     {
-        if (bulletPrefab == null || Mouse.current == null) return;
+        if (bulletPrefab == null || firePoint == null || Mouse.current == null || stats == null) return;
 
         Vector3 mousePos = Mouse.current.position.ReadValue();
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
         worldPos.z = 0;
 
-        // Direction from gun tip to mouse
-        Vector2 direction = ((Vector2)(worldPos - firePoint.position)).normalized;
+        Vector2 baseDirection = ((Vector2)(worldPos - firePoint.position)).normalized;
+        
+        // Fire main bullet + extra shots
+        int totalShots = 1 + stats.extraShots;
+        
+        for (int i = 0; i < totalShots; i++)
+        {
+            // Calculate angle offset: center shot has no offset, others spread symmetrically
+            float angleOffset = 0f;
+            if (totalShots > 1)
+            {
+                // Spread shots evenly: e.g., 3 shots = -15°, 0°, +15°
+                float halfSpread = (totalShots - 1) * stats.extraShotAngle / 2f;
+                angleOffset = -halfSpread + i * stats.extraShotAngle;
+            }
+            
+            // Rotate direction by angle offset
+            Vector2 direction = RotateVector(baseDirection, angleOffset);
+            
+            // Calculate rotation to face the direction of travel
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion bulletRotation = Quaternion.Euler(0, 0, angle);
+            
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, bulletRotation);
 
-        // Spawn bullet at firepoint with proper rotation
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
+                rb.velocity = direction * stats.bulletSpeed;
 
-        if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
-            rb.velocity = direction * bulletSpeed;
+            if (bullet.TryGetComponent<ProjectileDamage>(out var proj))
+            {
+                proj.damage = stats.gunDamage;
+            }
+        }
     }
 
+    Vector2 RotateVector(Vector2 v, float degrees)
+    {
+        float radians = degrees * Mathf.Deg2Rad;
+        float cos = Mathf.Cos(radians);
+        float sin = Mathf.Sin(radians);
+        return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
+    }
 
-
-
-    void MeleeAttack()
+    void SwordAttack()
     {
         if (anim != null)
-            anim.SetTrigger("Melee");
+            anim.SetTrigger("Sword");
 
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleePoint.position, meleeRange, enemyLayers);
-        
+        if (stats == null || swordPoint == null) return;
+
+        // 🔹 use stats.swordRange
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
+            swordPoint.position,
+            stats.swordRange,
+            enemyLayers
+        );
+
         foreach (Collider2D enemy in hitEnemies)
         {
             var hp = enemy.GetComponent<Health>();
             if (hp != null)
             {
-                hp.TakeDamage(meleeDamage);
-                Debug.Log("Melee hit " + enemy.name);
+                hp.TakeDamage(stats.swordDamage);  // 🔹 use stats.swordDamage
+                Debug.Log("Sword hit " + enemy.name);
             }
         }
     }
 
-
-
     void OnDrawGizmosSelected()
     {
-        if (meleePoint == null) return;
+        if (swordPoint == null) return;
+        // in editor, stats might be null, so fall back
+        float range = stats ? stats.swordRange : 1f;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(meleePoint.position, meleeRange);
+        Gizmos.DrawWireSphere(swordPoint.position, range);
     }
-
-
-
 }

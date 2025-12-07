@@ -3,16 +3,16 @@ using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] int maxHealth = 5;
-    int current;
+    [SerializeField] float maxHealth = 5;
+    float current;
 
     public UnityEvent onDie;
-    public UnityEvent<int,int> onHealthChanged = new UnityEvent<int,int>();
+    public UnityEvent<float,float> onHealthChanged = new UnityEvent<float,float>();
     private SpriteFlash flashEffect;
 
-    private int expDrop = 25;
+    private int expDrop = 5;
 
-    private ExpController playerExp;
+    private Experience playerExp;
 
     void Awake() { 
         current = maxHealth; onHealthChanged.Invoke(current, maxHealth);
@@ -20,13 +20,12 @@ public class Health : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            playerExp = player.GetComponent<ExpController>();
+            playerExp = player.GetComponent<Experience>();
         }
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
-        Debug.Log("taking damage: " + current);
         if (amount <= 0 || current <= 0) return;
         current = Mathf.Max(0, current - amount);
         onHealthChanged.Invoke(current, maxHealth);
@@ -34,11 +33,18 @@ public class Health : MonoBehaviour
         if (current == 0) Die();
     }
 
-    public void Heal(int amount)
+    public void Heal(float amount)
     {
         if (amount <= 0) return;
         current = Mathf.Min(maxHealth, current + amount);
         onHealthChanged.Invoke(current, maxHealth);
+    }
+
+    public void IncreaseMaxHealth(float amount)
+    {
+        maxHealth += amount;
+        current = Mathf.Min(current + amount, maxHealth);
+        onHealthChanged?.Invoke(current, maxHealth);
     }
 
     void Die()
@@ -52,6 +58,6 @@ public class Health : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public int Current => current;
-    public int Max => maxHealth;
+    public float Current => current;
+    public float Max => maxHealth;
 }

@@ -9,7 +9,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Melee
+    m_ConditionEvent: Sword
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6658239855411311758}
@@ -86,7 +86,7 @@ AnimatorController:
   m_Name: weapon_sword_down
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Melee
+  - m_Name: Sword
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0

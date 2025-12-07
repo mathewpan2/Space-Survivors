@@ -20,6 +20,11 @@ public class EnemySpawner : MonoBehaviour
     public float separation = 0.8f;
     public LayerMask avoidMask;
 
+    private float elapsedTime = 0f;
+
+
+    public float healthScalingRate = 5f;
+
     int alive;
 
     void Start()
@@ -29,6 +34,17 @@ public class EnemySpawner : MonoBehaviour
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p) player = p.transform;
         }
+        // StartCoroutine(Loop());
+    }
+
+    public void StopSpawning()
+    {
+        StopAllCoroutines();
+    }
+
+    public void StartSpawning()
+    {
+        StopAllCoroutines();
         StartCoroutine(Loop());
     }
 
@@ -46,12 +62,21 @@ public class EnemySpawner : MonoBehaviour
                     if (!TryGetSpawnPosition(out pos)) continue;
                     var prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
                     var go = Instantiate(prefab, pos, Quaternion.identity);
+
+                    Health enemyHealth = go.GetComponent<Health>();
+                    if (enemyHealth != null)
+                    {
+                        float additionalHealth = healthScalingRate * (elapsedTime / 60f);
+                        enemyHealth.IncreaseMaxHealth(additionalHealth);
+                        Debug.Log($"[EnemySpawner] Increased enemy health by {additionalHealth} to {enemyHealth.Max}");
+                    }
                     alive++;
                     var tracker = go.AddComponent<OnDestroyNotify>();
                     tracker.onDestroyed = () => alive--;
                 }
             }
             spawnInterval = Mathf.Max(0.5f, spawnInterval * 0.985f);
+            elapsedTime += spawnInterval;
             yield return new WaitForSeconds(spawnInterval);
         }
     }
