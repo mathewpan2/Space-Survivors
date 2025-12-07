@@ -29,6 +29,17 @@ public class EnemySpawner : MonoBehaviour
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p) player = p.transform;
         }
+        // StartCoroutine(Loop());
+    }
+
+    public void StopSpawning()
+    {
+        StopAllCoroutines();
+    }
+
+    public void StartSpawning()
+    {
+        StopAllCoroutines();
         StartCoroutine(Loop());
     }
 
