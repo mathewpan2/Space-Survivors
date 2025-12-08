@@ -29,6 +29,12 @@ public class VictoryUI : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void Back()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("mainmenu");
+    }
+
     // Update is called once per frame
     void Update()
     {
