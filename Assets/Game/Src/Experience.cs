@@ -17,6 +17,8 @@ public class Experience : MonoBehaviour
     public int Max => ExpToNextLevel;
     public int Level => level;
 
+    public AudioSource expAudio;
+    public AudioClip levelUpSound;
     public void AddExp(int amount)
     {
         if (amount <= 0) return;
@@ -31,7 +33,7 @@ public class Experience : MonoBehaviour
             Debug.Log("level up");
             // simple scaling curve
             ExpToNextLevel = Mathf.RoundToInt(ExpToNextLevel * 1.3f);
-
+            expAudio.PlayOneShot(levelUpSound);
             // fire level up event
             onLevelUp?.Invoke(level);
         }

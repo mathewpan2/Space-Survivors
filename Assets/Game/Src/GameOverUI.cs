@@ -6,9 +6,11 @@ public class GameOverUI : MonoBehaviour
     public Health playerHealth;
     public GameObject gameOverPanel;
 
-    [Header("Puase Panel")]
+    [Header("Pause Panel")]
     public GameObject pauseMenuPanel;  
-
+    public GameObject LevelUpPanel; 
+    public AudioSource audioSource;
+    public AudioClip loseSound;
     void Start()
     {
         if (!playerHealth)
@@ -31,8 +33,11 @@ public class GameOverUI : MonoBehaviour
     void OnPlayerDie()
     {
         Debug.Log("player die");
+        if (LevelUpPanel) 
+            LevelUpPanel.SetActive(false);
         if (gameOverPanel) 
             gameOverPanel.SetActive(true);
+            audioSource.PlayOneShot(loseSound);
 
         Time.timeScale = 0f;  // freeze game
     }
