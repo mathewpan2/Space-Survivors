@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 380166381}
   - component: {fileID: 380166380}
   m_Layer: 5
-  m_Name: CreditsText
+  m_Name: HowToPlayText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Credits
+  m_text: How to Play
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: aa8cd4362c527b046bad57feb4dac991, type: 2}
   m_sharedMaterial: {fileID: -9001365657868433433, guid: aa8cd4362c527b046bad57feb4dac991, type: 2}
@@ -1907,7 +1907,7 @@ GameObject:
   - component: {fileID: 1811741912}
   - component: {fileID: 1811741911}
   m_Layer: 5
-  m_Name: CreditsButton
+  m_Name: HowtoPlayButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
