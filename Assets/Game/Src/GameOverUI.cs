@@ -37,7 +37,7 @@ public class GameOverUI : MonoBehaviour
             LevelUpPanel.SetActive(false);
         if (gameOverPanel) 
             gameOverPanel.SetActive(true);
-            audioSource.PlayOneShot(loseSound);
+        audioSource.PlayOneShot(loseSound);
 
         Time.timeScale = 0f;  // freeze game
     }
