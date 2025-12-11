@@ -28,6 +28,9 @@ public class Movement : MonoBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private Animator playerAnim;
 
+    public AudioSource attackAudio;
+    public AudioClip gunShotSound;
+    public AudioClip swordSound;
     void Awake()
     {
         if (myRigidbody == null) myRigidbody = GetComponent<Rigidbody2D>();
@@ -176,6 +179,8 @@ public class Movement : MonoBehaviour
         // Fire main bullet + extra shots
         int totalShots = 1 + stats.extraShots;
         
+        attackAudio.PlayOneShot(gunShotSound);
+
         for (int i = 0; i < totalShots; i++)
         {
             // Calculate angle offset: center shot has no offset, others spread symmetrically
@@ -221,6 +226,7 @@ public class Movement : MonoBehaviour
 
         if (stats == null || swordPoint == null) return;
 
+        attackAudio.PlayOneShot(swordSound);
         // 🔹 use stats.swordRange
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
             swordPoint.position,

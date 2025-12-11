@@ -5,7 +5,7 @@ public class Experience : MonoBehaviour
 {
     [SerializeField] int level = 1;
     [SerializeField] int currentExp = 0;
-    [SerializeField] int ExpToNextLevel = 10;
+    [SerializeField] int ExpToNextLevel = 20;
 
     // (currentExp, ExpToNextLevel)
     public UnityEvent<int, int> onExpChanged;
@@ -17,6 +17,8 @@ public class Experience : MonoBehaviour
     public int Max => ExpToNextLevel;
     public int Level => level;
 
+    public AudioSource expAudio;
+    public AudioClip levelUpSound;
     public void AddExp(int amount)
     {
         if (amount <= 0) return;
@@ -30,8 +32,8 @@ public class Experience : MonoBehaviour
 
             Debug.Log("level up");
             // simple scaling curve
-            ExpToNextLevel = Mathf.RoundToInt(ExpToNextLevel * 1.3f);
-
+            ExpToNextLevel = Mathf.RoundToInt(ExpToNextLevel * 1.5f);
+            expAudio.PlayOneShot(levelUpSound);
             // fire level up event
             onLevelUp?.Invoke(level);
         }

@@ -6,6 +6,11 @@ public class GameOverUI : MonoBehaviour
     public Health playerHealth;
     public GameObject gameOverPanel;
 
+    [Header("Pause Panel")]
+    public GameObject pauseMenuPanel;  
+    public GameObject LevelUpPanel; 
+    public AudioSource audioSource;
+    public AudioClip loseSound;
     void Start()
     {
         if (!playerHealth)
@@ -15,24 +20,49 @@ public class GameOverUI : MonoBehaviour
                 playerHealth = p.GetComponent<Health>();
             }
         }
+
         playerHealth.onDie.AddListener(OnPlayerDie);
-        if (gameOverPanel) gameOverPanel.SetActive(false);
+
+        if (gameOverPanel) 
+            gameOverPanel.SetActive(false);
+
+        if (pauseMenuPanel) 
+            pauseMenuPanel.SetActive(false);
     }
 
     void OnPlayerDie()
     {
         Debug.Log("player die");
-        if (gameOverPanel) gameOverPanel.SetActive(true);
-        Time.timeScale = 0f;  // pause
+        if (LevelUpPanel) 
+            LevelUpPanel.SetActive(false);
+        if (gameOverPanel) 
+            gameOverPanel.SetActive(true);
+        audioSource.PlayOneShot(loseSound);
+
+        Time.timeScale = 0f;  // freeze game
     }
 
     // Hook this to the Restart button OnClick
     public void Restart()
     {
+        if (pauseMenuPanel) 
+            pauseMenuPanel.SetActive(false);
+
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // Optional: Quit to menu…
-    public void Quit() { Application.Quit(); }
+    public void Back()
+    {
+        if (pauseMenuPanel) 
+            pauseMenuPanel.SetActive(false);
+
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("mainmenu");
+    }
+
+    public void Quit() 
+    { 
+        Application.Quit(); 
+    }
 }
